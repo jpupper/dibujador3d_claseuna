@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DibujoLiveShare — dibujo 3D colaborativo</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<!-- ============ HUD superior izquierdo ============ -->
+<div class="hud panel" id="hud-info">
+  <div class="row">
+    <h1>DibujoLive<span>Share</span></h1>
+    <button class="icon" id="btn-help" title="Ayuda (H)">?</button>
+  </div>
+  <div class="status">
+    <span class="dot" id="status-dot"></span>
+    <span id="status-text">conectando…</span>
+  </div>
+  <div class="stats">
+    <span id="stat-users">0 en línea</span>
+    <span class="sep">·</span>
+    <span id="stat-strokes">0 trazos</span>
+  </div>
+  <div class="users" id="users"></div>
+
+  <div class="share">
+    <div class="share-label">Compartí este link (los demás deben estar en la misma WiFi):</div>
+    <div class="share-row">
+      <input id="share-link" readonly value="">
+      <button class="icon" id="btn-copy" title="Copiar link">⧉</button>
+    </div>
+  </div>
+</div>
+
+<!-- botón para ocultar/mostrar los controles (útil en celular) -->
+<button class="hud-toggle" id="btn-hud" title="Mostrar / ocultar controles">☰</button>
+
+<!-- ============ Barra de herramientas ============ -->
+<div class="toolbar panel">
+  <div class="tools">
+    <button class="tool active" data-tool="brush" title="Pincel (B)">✏️ Pincel</button>
+    <button class="tool" data-tool="eraser" title="Borrador: click sobre un trazo (E)">🧽 Borrador</button>
+  </div>
+
+  <div class="colors" id="colors"></div>
+
+  <label class="slider">
+    <span>Grosor</span>
+    <input type="range" id="size" min="0.02" max="0.60" step="0.005" value="0.12">
+    <b id="size-value">0.12</b>
+  </label>
+
+  <div class="actions">
+    <button class="ghost" id="btn-undo" title="Deshacer mi último trazo (Ctrl+Z)">↶ Deshacer</button>
+    <button class="ghost" id="btn-export" title="Descargar el dibujo en JSON">⬇ Exportar</button>
+    <button class="ghost" id="btn-import" title="Cargar un dibujo JSON">⬆ Importar</button>
+    <button class="ghost danger" id="btn-clear" title="Borrar el dibujo para TODOS">🗑 Limpiar</button>
+    <input type="file" id="file-import" accept=".json,application/json" hidden>
+  </div>
+</div>
+
+<!-- ============ Control de profundidad ============ -->
+<div class="depth panel">
+  <div class="row">
+    <span class="depth-title">Profundidad</span>
+    <b id="depth-value">5.0</b>
+  </div>
+  <input type="range" id="depth" min="0.6" max="40" step="0.1" value="5">
+  <div class="hint">Shift + rueda del mouse para cambiarla rápido</div>
+  <div class="row cam-btns">
+    <button class="ghost" id="btn-depth-down" title="Acercar plano de dibujo (Shift+rueda)">−</button>
+    <button class="ghost" id="btn-depth-up" title="Alejar plano de dibujo (Shift+rueda)">+</button>
+    <button class="ghost" id="btn-reset-cam" title="Resetear cámara (R)">⟳ Cámara</button>
+  </div>
+</div>
+
+<!-- ============ Ayuda ============ -->
+<div class="overlay" id="help">
+  <div class="card panel">
+    <h2>Cómo se dibuja</h2>
+    <table>
+      <tr><td><b>Click izquierdo + arrastrar</b></td><td>dibujar en el plano que está a la profundidad actual</td></tr>
+      <tr><td><b>Click derecho + arrastrar</b></td><td>rotar la cámara (orbitar alrededor del dibujo)</td></tr>
+      <tr><td><b>Rueda del mouse</b></td><td>acercar / alejar la cámara</td></tr>
+      <tr><td><b>Shift + rueda</b></td><td>mover el plano de dibujo más cerca o más lejos (profundidad)</td></tr>
+      <tr><td><b>Click del medio + arrastrar</b></td><td>desplazar (paneo)</td></tr>
+      <tr><td><b>1…8</b></td><td>elegir color</td></tr>
+      <tr><td><b>B / E</b></td><td>pincel / borrador</td></tr>
+      <tr><td><b>Ctrl+Z</b></td><td>deshacer tu último trazo</td></tr>
+      <tr><td><b>↑ ↓</b></td><td>profundidad del plano de dibujo</td></tr>
+      <tr><td><b>R</b></td><td>resetear la cámara</td></tr>
+      <tr><td><b>H</b></td><td>abrir / cerrar esta ayuda</td></tr>
+      <tr><td><b>Táctil</b></td><td>1 dedo dibuja · 2 dedos orbitan y hacen zoom</td></tr>
+    </table>
+    <p class="note">
+      Todo lo que dibujás se replica en vivo a los demás clientes y queda guardado
+      en el servidor: el contexto 3D es uno solo para todos. Girá la cámara para
+      ver en volumen los trazos hechos a distintas profundidades.
+    </p>
+    <button class="ghost" id="btn-help-close">Cerrar (H)</button>
+  </div>
+</div>
+
+<!-- ============ Nombre ============ -->
+<div class="overlay show" id="name-overlay">
+  <div class="card panel small">
+    <h2>¡Bienvenido!</h2>
+    <p class="note">Poné tu nombre para que los demás te vean en el lienzo.</p>
+    <input type="text" id="name-input" maxlength="24" placeholder="Tu nombre">
+    <button id="btn-name-go">Entrar a dibujar</button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

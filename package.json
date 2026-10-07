@@ -1,0 +1,32 @@
+{
+  "name": "dibujoliveshare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dibujo 3D colaborativo en vivo: todos los clientes comparten el mismo contexto 3D (Node + Express + Socket.IO + three.js)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "verify": "node tests/verify.mjs",
+    "test": "node tests/verify.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "3d",
+    "collaborative",
+    "socket.io",
+    "three.js",
+    "drawing"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.22.3",
+    "socket.io": "^4.8.4",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  }
+}

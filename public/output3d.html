@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DibujoLiveShare · output3d — solo el resultado final</title>
+<link rel="stylesheet" href="./output3d.css">
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<div id="status" title="estado de la conexión">
+  <span class="dot" id="status-dot"></span>
+  <span id="status-text">conectando…</span>
+</div>
+
+<div id="hint">
+  <b>output3d</b> · pantalla de salida: muestra solo los trazos <u>terminados</u>.
+  <span class="keys">R rotación · C cámara · G grilla · F pantalla completa · ?spin=0 desactiva el giro</span>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="./output3d.js"></script>
+</body>
+</html>
